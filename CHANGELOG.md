@@ -1,18 +1,18 @@
 ## 1.0.35 [April 18, 2020]
 
-* Merged PR [#41](https://github.com/muslimtv/flutter_playout/pull/41)
+* Merged PR [#41](https://github.com/muslimtv/flutter_zplayer/pull/41)
 
 ## 1.0.34 [April 10, 2020]
 
-* fixes [#39](https://github.com/muslimtv/flutter_playout/issues/39)
+* fixes [#39](https://github.com/muslimtv/flutter_zplayer/issues/39)
 
 ## 1.0.33 [March 23, 2020]
 
-* Merged PR (https://github.com/muslimtv/flutter_playout/pull/29)
+* Merged PR (https://github.com/muslimtv/flutter_zplayer/pull/29)
 
 ## 1.0.32 [March 23, 2020]
 
-* Merged PR (https://github.com/muslimtv/flutter_playout/pull/28)
+* Merged PR (https://github.com/muslimtv/flutter_zplayer/pull/28)
 
 * Fixed wrong arguments casting in Android PlayerLayout. It was throwing exception and the change wouldn't happen.
 
@@ -20,7 +20,7 @@
 
 ## 1.0.31 [March 23, 2020]
 
-* Merged PR to add progressive video source for Android (https://github.com/muslimtv/flutter_playout/pull/26)
+* Merged PR to add progressive video source for Android (https://github.com/muslimtv/flutter_zplayer/pull/26)
 
 ## 1.0.30 [February 15, 2020]
 

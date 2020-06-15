@@ -22,7 +22,6 @@ mixin PlayerObserver {
 
   /// Override this method to get notifications when media is played.
   void onPlay() {/* user implementation */}
-
   /// Override this method to get notifications when media has finished playing.
   void onComplete() {/* user implementation */}
 

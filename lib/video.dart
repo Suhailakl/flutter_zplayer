@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_playout/player_state.dart';
+import 'package:flutter_zplayer/player_state.dart';
 
 /// Video plugin for playing HLS stream using native player. [autoPlay] flag
 /// controls whether to start playback as soon as player is ready. To show/hide
@@ -107,32 +107,6 @@ class _VideoState extends State<Video> {
       }
 
       /* iOS */
-      else if (Platform.isIOS) {
-        _playerWidget = UiKitView(
-          viewType: 'tv.mta/NativeVideoPlayer',
-          creationParams: {
-            "autoPlay": widget.autoPlay,
-            "showControls": widget.showControls,
-            "url": widget.url,
-            "title": widget.title ?? "",
-            "subtitle": widget.subtitle ?? "",
-            "preferredAudioLanguage": widget.preferredAudioLanguage ?? "mul",
-            "isLiveStream": widget.isLiveStream,
-          },
-          creationParamsCodec: const JSONMessageCodec(),
-          onPlatformViewCreated: (viewId) {
-            _onPlatformViewCreated(viewId);
-            if (widget.onViewCreated != null) {
-              widget.onViewCreated(viewId);
-            }
-          },
-          gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>[
-            new Factory<OneSequenceGestureRecognizer>(
-              () => new EagerGestureRecognizer(),
-            ),
-          ].toSet(),
-        );
-      }
     }
   }
 
