@@ -25,7 +25,7 @@ public class PlayerView implements PlatformView, MethodChannel.MethodCallHandler
 
     PlayerView(Context context, Activity activity, int id, BinaryMessenger messenger, Object args) {
 
-        new MethodChannel(messenger, "tv.mta/NativeVideoPlayerMethodChannel_" + id)
+        new MethodChannel(messenger, "zplayer/NativeVideoPlayerMethodChannel_" + id)
                 .setMethodCallHandler(this);
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 //            activity.getWindow().setStatusBarColor(ContextCompat.getColor(context, R.color.bg_color));

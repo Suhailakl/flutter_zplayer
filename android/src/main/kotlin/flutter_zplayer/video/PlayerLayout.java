@@ -215,7 +215,7 @@ public class PlayerLayout extends PlayerView implements  DownloadTracker.Listene
             this.showControls = args.getBoolean("showControls");
             new EventChannel(
                     messenger,
-                    "tv.mta/NativeVideoPlayerEventChannel_" + this.viewId,
+                    "zplayer/NativeVideoPlayerEventChannel_" + this.viewId,
                     JSONMethodCodec.INSTANCE).setStreamHandler(this);
             LocalBroadcastManager lbm = LocalBroadcastManager.getInstance(context);
             lbm.registerReceiver(receiver, new IntentFilter("download_status"));

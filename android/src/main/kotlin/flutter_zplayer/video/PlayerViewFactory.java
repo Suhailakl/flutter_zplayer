@@ -27,7 +27,7 @@ public class PlayerViewFactory extends PlatformViewFactory {
     public static void registerWith(PluginRegistry.Registrar registrar) {
         final PlayerViewFactory plugin = new PlayerViewFactory(registrar.messenger(), registrar.activity());
 
-        registrar.platformViewRegistry().registerViewFactory("tv.mta/NativeVideoPlayer", plugin);
+        registrar.platformViewRegistry().registerViewFactory("zplayer/NativeVideoPlayer", plugin);
         new DownloadsPlayerControl(registrar).registerChannel();
         registrar.addViewDestroyListener(new PluginRegistry.ViewDestroyListener() {
             @Override

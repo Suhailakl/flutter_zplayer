@@ -79,7 +79,7 @@ class _VideoState extends State<Video> {
       /* Android */
       if (Platform.isAndroid) {
         _playerWidget = AndroidView(
-          viewType: 'tv.mta/NativeVideoPlayer',
+          viewType: 'zplayer/NativeVideoPlayer',
           creationParams: {
             "autoPlay": widget.autoPlay,
             "showControls": widget.showControls,
@@ -145,7 +145,7 @@ class _VideoState extends State<Video> {
   void _onPlatformViewCreated(int viewId) {
     _platformViewId = viewId;
     _methodChannel =
-        MethodChannel("tv.mta/NativeVideoPlayerMethodChannel_$viewId");
+        MethodChannel("zplayer/NativeVideoPlayerMethodChannel_$viewId");
   }
 
   /// The [desiredState] flag has changed so need to update playback to
