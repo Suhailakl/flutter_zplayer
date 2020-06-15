@@ -2,7 +2,6 @@ package flutter_zplayer
 
 import android.util.Log
 import io.flutter.plugin.common.PluginRegistry
-import flutter_zplayer.audio.AudioPlayer
 import flutter_zplayer.video.PlayerViewFactory
 
 class FlutterZplayerPlugin {
@@ -10,7 +9,6 @@ class FlutterZplayerPlugin {
     @JvmStatic
     fun registerWith(registrar: PluginRegistry.Registrar) {
       PlayerViewFactory.registerWith(registrar)
-      AudioPlayer.registerWith(registrar)
     }
   }
 }
