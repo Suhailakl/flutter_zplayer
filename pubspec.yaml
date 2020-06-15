@@ -4,7 +4,7 @@ description: This plugin provides video playback from a URL with background audi
 version: 1.0.35
 author: Suhail P M
 homepage: https://www.zartek.in
-repository: https://github.com/muslimtv/flutter_zplayer
+repository: https://github.com/Suhailakl/flutter_zplayer/
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
