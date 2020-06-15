@@ -1,9 +1,9 @@
 name: flutter_zplayer
-description: This plugin provides audio/video playback from a URL with background audio support, lock screen
-  controls & player events for both iOS and Android.
+description: This plugin provides video playback from a URL with background audio support, lock screen
+  controls & player events on Android.
 version: 1.0.35
-author: Muslim Television Ahmadiyya International <developer@mta.tv>
-homepage: https://www.mta.tv
+author: Suhail P M
+homepage: https://www.zartek.in
 repository: https://github.com/muslimtv/flutter_zplayer
 
 environment:
@@ -28,7 +28,7 @@ flutter:
   # adding or updating assets for this project.
   plugin:
     androidPackage: flutter_zplayer
-    pluginClass: FlutterPlayoutPlugin
+    pluginClass: FlutterZplayerPlugin
 
   # To add assets to your plugin package, add an assets section, like this:
   # assets:
