@@ -856,7 +856,7 @@ public class PlayerLayout extends PlayerView implements  DownloadTracker.Listene
     void onDuration() {
 
         try {
-            hideVirtualButtons();
+          //  hideVirtualButtons();
             long newDuration = mPlayerView.getDuration();
 
             if (newDuration != mediaDuration && eventSink != null) {
