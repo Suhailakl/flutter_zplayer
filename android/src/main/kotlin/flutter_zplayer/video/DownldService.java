@@ -19,6 +19,7 @@ package flutter_zplayer.video;
 import android.app.Notification;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.google.android.exoplayer2.offline.Download;
 import com.google.android.exoplayer2.offline.DownloadManager;
@@ -103,25 +104,89 @@ public class DownldService extends com.google.android.exoplayer2.offline.Downloa
     public void onDownloadChanged(DownloadManager manager, Download download) {
       Notification notification;
       if (download.state == Download.STATE_COMPLETED) {
-        TinyDB tinydb = new TinyDB(context);
-        ArrayList<String> urlList = tinydb.getListString("urls");
-        urlList.add(download.request.uri.toString());
-        tinydb.putListString("urls", urlList);
+        TinyDB tinyDB=new TinyDB(context);
+        ArrayList<String> data=tinyDB.getListString("urls");
+        if(data!=null&&data.size()!=0&&data.contains(download.request.uri.toString()+"?status=downloading")) {
+          if (data.remove(download.request.uri.toString()+"?status=downloading")) {
+            tinyDB.putListString("urls", data);
+          }
+        }
+        if(data!=null&&data.size()!=0&&data.contains(download.request.uri.toString()+"?status=completed")) {
+          if (data.remove(download.request.uri.toString()+"?status=completed")) {
+            tinyDB.putListString("urls", data);
+          }
+        }
+        ArrayList<String> urlList = tinyDB.getListString("urls");
+        urlList.add(download.request.uri.toString()+"?status=completed");
+        tinyDB.putListString("urls", urlList);
         notification =
             notificationHelper.buildDownloadCompletedNotification(
                 R.drawable.ic_download_done,
                 /* contentIntent= */ null,
                 Util.fromUtf8Bytes(download.request.data));
-      } else if (download.state == Download.STATE_FAILED) {
+        NotificationUtil.setNotification(context, nextNotificationId++, notification);
+      }
+      else if(download.state == Download.STATE_DOWNLOADING){
+          TinyDB tinyDB=new TinyDB(context);
+          ArrayList<String> data=tinyDB.getListString("urls");
+        if(data!=null&&data.size()!=0&&data.contains(download.request.uri.toString()+"?status=completed")) {
+          if (data.remove(download.request.uri.toString()+"?status=completed")) {
+            tinyDB.putListString("urls", data);
+          }
+        }
+          if(data!=null&&data.size()!=0&&data.contains(download.request.uri.toString()+"?status=downloading")) {
+            if (data.remove(download.request.uri.toString()+"?status=downloading")) {
+              tinyDB.putListString("urls", data);
+            }
+        }
+        ArrayList<String> urlList = tinyDB.getListString("urls");
+        urlList.add(download.request.uri.toString()+"?status=downloading");
+        tinyDB.putListString("urls", urlList);
+
+      }
+      else if (download.state == Download.STATE_FAILED) {
+        TinyDB tinyDB=new TinyDB(context);
+        ArrayList<String> data=tinyDB.getListString("urls");
+        if(data!=null&&data.size()!=0&&data.contains(download.request.uri.toString()+"?status=downloading")) {
+          if (data.remove(download.request.uri.toString()+"?status=downloading")) {
+            tinyDB.putListString("urls", data);
+          }
+        }
         notification =
-            notificationHelper.buildDownloadFailedNotification(
-                R.drawable.ic_download_done,
-                /* contentIntent= */ null,
-                Util.fromUtf8Bytes(download.request.data));
-      } else {
+                notificationHelper.buildDownloadCompletedNotification(
+                        R.drawable.ic_download_done,
+                        /* contentIntent= */ null,
+                        Util.fromUtf8Bytes(download.request.data));
+        NotificationUtil.setNotification(context, nextNotificationId++, notification);
+
+      }
+      else if (download.state == Download.STATE_STOPPED) {
+        TinyDB tinyDB=new TinyDB(context);
+        ArrayList<String> data=tinyDB.getListString("urls");
+        if(data!=null&&data.size()!=0&&data.contains(download.request.uri.toString()+"?status=downloading")) {
+          if (data.remove(download.request.uri.toString()+"?status=downloading")) {
+            tinyDB.putListString("urls", data);
+          }
+        }
+
+      }
+      else if (download.state == Download.STATE_RESTARTING) {
+        TinyDB tinyDB=new TinyDB(context);
+        ArrayList<String> data=tinyDB.getListString("urls");
+        if(data!=null&&data.size()!=0&&data.contains(download.request.uri.toString()+"?status=downloading")) {
+          if (data.remove(download.request.uri.toString()+"?status=downloading")) {
+            tinyDB.putListString("urls", data);
+          }
+        }
+        TinyDB tinydb = new TinyDB(context);
+        ArrayList<String> urlList = tinydb.getListString("urls");
+        urlList.add(download.request.uri.toString());
+        tinydb.putListString("urls", urlList);
+
+      }
+      else {
         return;
       }
-      NotificationUtil.setNotification(context, nextNotificationId++, notification);
     }
   }
 }

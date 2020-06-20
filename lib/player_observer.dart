@@ -40,6 +40,7 @@ mixin PlayerObserver {
   /// [duration] is in milliseconds. Returns -1 for live stream
   void onDuration(int duration) {/* user implementation */}
   void onDownloadStatus(bool status){}
+  void onDownloading(bool status){}
   /// Override this method to get errors thrown by the player
   void onError(String error) {/* user implementation */}
 
@@ -62,7 +63,9 @@ mixin PlayerObserver {
       case "onComplete":
         onComplete();
         break;
-
+      case "onDownloading":
+        onDownloading(event["onDownloading"]);
+        break;
       /* onTime */
       case "onTime":
         onTime(event["time"].toInt());

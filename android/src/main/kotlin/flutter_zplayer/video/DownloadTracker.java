@@ -105,20 +105,9 @@ public class DownloadTracker{
                     public void onDownloadChanged(DownloadManager downloadManager, Download download) {
                        Log.e("hxbfhjd","dksjksdgfjg");
                         if (download.state == Download.STATE_DOWNLOADING) {
-                            Log.e("jbhfcgjfdsg ","kdsjhgdsf");
-
-//                            if(!downloadProgressDialog.isShowing()) {
-//                                TimerTask _timerTask = new TimerTask() {
-//                                    @Override
-//                                    public void run() {
-//                                        if (downloadProgressDialog != null && downloadProgressDialog.isShowing()) {
-//                                            int percent = (int) download.getPercentDownloaded();
-//                                            downloadProgressDialog.setProgress(percent);
-//                                        }
-//                                    }
-//                                };
-//                                downTimer.schedule(_timerTask,1000);
-//                            }
+                            Intent intent = new Intent("download_status");
+                            intent.putExtra("status", "downloading");
+                            LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
                         }
                         if (download.state == Download.STATE_COMPLETED) {
                             Intent intent = new Intent("download_status");
@@ -158,8 +147,14 @@ public class DownloadTracker{
                 context, DownldService.class, download.request.id, /* foreground= */ false);
         TinyDB tinyDB=new TinyDB(context);
         ArrayList<String> data=tinyDB.getListString("urls");
-        if(data!=null&&data.size()!=0&&data.contains(uri.toString())){
-            if(data.remove(uri.toString())){
+        if(data!=null&&data.size()!=0&&data.contains(uri.toString()+"?status=downloading")){
+            if(data.remove(uri.toString()+"?status=downloading")){
+                tinyDB.putListString("urls",data);
+            }
+
+        }
+        if(data!=null&&data.size()!=0&&data.contains(uri.toString()+"?status=completed")){
+            if(data.remove(uri.toString()+"?status=completed")){
                 tinyDB.putListString("urls",data);
             }
 
@@ -177,8 +172,15 @@ public class DownloadTracker{
                 context, DownldService.class, download.request.id, /* foreground= */ false);
         TinyDB tinyDB=new TinyDB(context);
         ArrayList<String> data=tinyDB.getListString("urls");
-        if(data!=null&&data.size()!=0&&data.contains(uri.toString())){
-            if(data.remove(uri.toString())){
+
+        if(data!=null&&data.size()!=0&&data.contains(uri.toString()+"?status=downloading")){
+            if(data.remove(uri.toString()+"?status=downloading")){
+                tinyDB.putListString("urls",data);
+            }
+
+        }
+        if(data!=null&&data.size()!=0&&data.contains(uri.toString()+"?status=completed")){
+            if(data.remove(uri.toString()+"?status=completed")){
                 tinyDB.putListString("urls",data);
             }
 

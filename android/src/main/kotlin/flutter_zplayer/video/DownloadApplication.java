@@ -20,7 +20,6 @@ import android.app.Application;
 import android.content.Context;
 
 import com.google.android.exoplayer2.BuildConfig;
-import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.RenderersFactory;
 import com.google.android.exoplayer2.database.DatabaseProvider;
@@ -46,8 +45,6 @@ import com.google.android.exoplayer2.util.Util;
 import java.io.File;
 import java.io.IOException;
 import java.util.function.Function;
-
-import io.flutter.app.FlutterApplication;
 
 /**
  * Placeholder application to facilitate overriding Application methods for debugging and testing.

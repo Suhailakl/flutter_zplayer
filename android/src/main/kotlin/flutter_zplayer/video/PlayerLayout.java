@@ -488,10 +488,15 @@ public class PlayerLayout extends PlayerView implements  DownloadTracker.Listene
                         isStarted[0] =true;
                     try {
                         JSONObject message = new JSONObject();
-                        message.put("name", "onDownloadStatus");
+
                         if(downloadTracker.isDownloaded(Uri.parse(url))&&downloadList!=null&&downloadList.size()!=0){
-                            if(downloadList.contains(url)){
+                            if(downloadList.contains(url+"?status=completed")){
+                                message.put("name", "onDownloadStatus");
                                 message.put("download_status",true);
+                                eventSink.success(message);
+                            }else if(downloadList.contains(url+"?status=downloading")){
+                                message.put("name", "onDownloading");
+                                message.put("onDownloading",true);
                                 eventSink.success(message);
                             }
                         }else if(downloadTracker.isDownloaded(Uri.parse(url))){
@@ -503,11 +508,17 @@ public class PlayerLayout extends PlayerView implements  DownloadTracker.Listene
                                 downloadTracker.addListener(this::run);
                                 message.put("download_status", false);
                                 eventSink.success(message);
+                            }else{
+                                JSONObject message1 = new JSONObject();
+                                message1.put("name", "onDownloading");
+                                message1.put("onDownloading", true);
+                                eventSink.success(message1);
                             }
                         }else{
                             message.put("download_status",false);
                             eventSink.success(message);
                         }
+
 
                     } catch (JSONException e) {
                         Log.e(TAG, "onDownloadStatus: " + e.getMessage(), e);
@@ -689,8 +700,11 @@ public class PlayerLayout extends PlayerView implements  DownloadTracker.Listene
                         message.put("name", "onDownloadStatus");
                         message.put("download_status", true);
                         eventSink.success(message);
-                            Toast.makeText(context, "Download Finished", Toast.LENGTH_SHORT).show();
-//                            hideVirtualButtons();
+                        JSONObject message1 = new JSONObject();
+                        message1.put("name", "onDownloading");
+                        message1.put("onDownloading", false);
+                        eventSink.success(message1);
+                        Toast.makeText(context, "Download Finished", Toast.LENGTH_SHORT).show();
                             updateMediaSource();
                     } catch (JSONException e) {
                         android.util.Log.e(TAG, "onDownloadStatus: " + e.getMessage(), e);
@@ -702,16 +716,42 @@ public class PlayerLayout extends PlayerView implements  DownloadTracker.Listene
                             message.put("name", "onDownloadStatus");
                             message.put("download_status", false);
                             eventSink.success(message);
+                            JSONObject message1 = new JSONObject();
+                            message1.put("name", "onDownloading");
+                            message1.put("onDownloading", false);
+                            eventSink.success(message1);
                             Toast.makeText(context, "Successfully Deleted", Toast.LENGTH_SHORT).show();
-//                            hideVirtualButtons();
                             updateMediaSource();
                         } catch (JSONException e) {
                             android.util.Log.e(TAG, "onDownloadStatus: " + e.getMessage(), e);
                         }
                         break;
                     case "download_failed":
-                        Toast.makeText(context, "Download Failed!", Toast.LENGTH_SHORT).show();
-//                        hideVirtualButtons();
+                        try {
+                            JSONObject message = new JSONObject();
+                            message.put("name", "onDownloadStatus");
+                            message.put("download_status", false);
+                            eventSink.success(message);
+                            JSONObject message1 = new JSONObject();
+                            message1.put("name", "onDownloading");
+                            message1.put("onDownloading", false);
+                            eventSink.success(message1);
+                            Toast.makeText(context, "Download Failed!", Toast.LENGTH_SHORT).show();
+                            updateMediaSource();
+                        } catch (JSONException e) {
+                            android.util.Log.e(TAG, "onDownloadStatus: " + e.getMessage(), e);
+                        }
+                        break;
+
+                        case "downloading":
+                        try {
+                            JSONObject message = new JSONObject();
+                            message.put("name", "onDownloading");
+                            message.put("onDownloading", true);
+                            eventSink.success(message);
+                        } catch (JSONException e) {
+                            android.util.Log.e(TAG, "onDownloadStatus: " + e.getMessage(), e);
+                        }
                         break;
                 }
                 }
