@@ -276,7 +276,7 @@ public class PlayerLayout extends PlayerView implements  DownloadTracker.Listene
         this.setPlayer(mPlayerView);
 
         updateMediaSource();
-        setupMediaSession();
+    //    setupMediaSession();
 //
 
 
@@ -679,7 +679,7 @@ public class PlayerLayout extends PlayerView implements  DownloadTracker.Listene
                                 dismissedDialog-> {
                     isShowingTrackSelectionDialog = false;
 //                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-//                                        hideVirtualButtons();
+                                       hideVirtualButtons();
 //                                    };
 
 
@@ -785,7 +785,7 @@ public class PlayerLayout extends PlayerView implements  DownloadTracker.Listene
                     renderersFactory,
                     dialogInterface ->{    isShowingDownloadTrackSelectionDialog=false;
 //                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-//                            hideVirtualButtons();
+                            hideVirtualButtons();
 //                        }
                         }
                         );
