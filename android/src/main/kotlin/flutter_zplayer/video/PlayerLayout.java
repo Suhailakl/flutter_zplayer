@@ -856,7 +856,6 @@ public class PlayerLayout extends PlayerView implements  DownloadTracker.Listene
     void onDuration() {
 
         try {
-          //  hideVirtualButtons();
             long newDuration = mPlayerView.getDuration();
 
             if (newDuration != mediaDuration && eventSink != null) {
@@ -881,8 +880,9 @@ public class PlayerLayout extends PlayerView implements  DownloadTracker.Listene
     @Override
     public void onDestroy() {
         try {
+           // hideVirtualButtons();
             Log.e("dfgsdfghfh","Fgfd");
-            showVirtualButtons();
+           // showVirtualButtons();
             isBound = false;
             mPlayerView.stop(true);
 
@@ -941,8 +941,8 @@ public class PlayerLayout extends PlayerView implements  DownloadTracker.Listene
         @Override
         public void onStop() {
             pause();
-            showVirtualButtons();
-        //    hideVirtualButtons();
+          // showVirtualButtons();
+          //  hideVirtualButtons();
         }
     }
 
