@@ -110,6 +110,8 @@ public class DownloadTracker{
                             LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
                         }
                         if (download.state == Download.STATE_COMPLETED) {
+//                            TinyDB tinyDB=new TinyDB(context);
+//                            tinyDB.put
                             Intent intent = new Intent("download_status");
                             intent.putExtra("status", "download_finished");
                             LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
@@ -217,6 +219,7 @@ public class DownloadTracker{
     }
 
     private void loadDownloads() {
+        Log.e("dzsjfhjsdf ","fsdjnhsda");
         try (DownloadCursor loadedDownloads = downloadIndex.getDownloads()) {
             while (loadedDownloads.moveToNext()) {
                 Download download = loadedDownloads.getDownload();

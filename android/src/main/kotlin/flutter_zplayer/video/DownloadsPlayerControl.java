@@ -36,7 +36,7 @@ public class DownloadsPlayerControl  {
                             result.success(onDownloadList());
                         }
                         else if (call.method.equals("removeMedia")) {
-                            result.success(removeMediaItem(call.argument("url").toString()));
+                            result.success(removeMediaItem(call.argument("url").toString(),"ghyf"));
                         }
 
                     }});
@@ -48,9 +48,9 @@ public class DownloadsPlayerControl  {
             return downloadList;
 
     }
-    private boolean removeMediaItem(String url){
-        DownloadApplication application =new DownloadApplication(regitrar.activity(),regitrar.context());
-        DownloadTracker downloadTracker = application.getDownloadTracker();
+    private boolean removeMediaItem(String url,String userId){
+        DownloadApplication application =new DownloadApplication(regitrar.activity(),regitrar.context(),userId);
+        DownloadTracker downloadTracker = application.getDownloadTracker("jhdsgf");
         downloadTracker.removeMediaUrl(Uri.parse(url));
        Log.e("jdfhjdsf ",url);
             return true;

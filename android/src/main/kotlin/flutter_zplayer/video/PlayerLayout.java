@@ -13,6 +13,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
@@ -129,6 +130,7 @@ public class PlayerLayout extends PlayerView implements  DownloadTracker.Listene
     private String title = "";
 
     private String subtitle = "";
+    private String userId="";
 
     private String preferredAudioLanguage = "mul";
 
@@ -140,6 +142,7 @@ public class PlayerLayout extends PlayerView implements  DownloadTracker.Listene
     private boolean startAutoPlay;
     private int startWindow;
     private long startPosition;
+    DownloadApplication application;
     private boolean showControls = false;
     private static final String KEY_WINDOW = "window";
     private static final String KEY_POSITION = "position";
@@ -201,7 +204,7 @@ public class PlayerLayout extends PlayerView implements  DownloadTracker.Listene
             JSONObject args = (JSONObject) arguments;
 
             this.url = args.getString("url");
-
+            this.userId=args.getString("userId");
             this.title = args.getString("title");
 
             this.subtitle = args.getString("subtitle");
@@ -213,6 +216,8 @@ public class PlayerLayout extends PlayerView implements  DownloadTracker.Listene
             this.autoPlay = args.getBoolean("autoPlay");
 
             this.showControls = args.getBoolean("showControls");
+            TinyDB tinyDB=new TinyDB(activity);
+            tinyDB.putString("userId",userId);
             new EventChannel(
                     messenger,
                     "zplayer/NativeVideoPlayerEventChannel_" + this.viewId,
@@ -248,9 +253,9 @@ public class PlayerLayout extends PlayerView implements  DownloadTracker.Listene
 
     private void initPlayer() {
         Log.e("zxfjhnsdjnfh","sfzdlkjsdkf");
-        DownloadApplication application =new DownloadApplication(activity,context);
+         application =new DownloadApplication(activity,context,userId);
         useExtensionRenderers = application.useExtensionRenderers();
-        downloadTracker = application.getDownloadTracker();
+        downloadTracker = application.getDownloadTracker(userId);
         downloadTracker.addListener(this);
         trackSelector = new DefaultTrackSelector(context);
         trackSelector.setParameters(
@@ -271,10 +276,9 @@ public class PlayerLayout extends PlayerView implements  DownloadTracker.Listene
 
         setUseController(showControls);
 
-        listenForPlayerTimeChange();
 
         this.setPlayer(mPlayerView);
-
+        listenForPlayerTimeChange();
         updateMediaSource();
     //    setupMediaSession();
 //
@@ -488,8 +492,8 @@ public class PlayerLayout extends PlayerView implements  DownloadTracker.Listene
                         isStarted[0] =true;
                     try {
                         JSONObject message = new JSONObject();
-
                         if(downloadTracker.isDownloaded(Uri.parse(url))&&downloadList!=null&&downloadList.size()!=0){
+
                             if(downloadList.contains(url+"?status=completed")){
                                 message.put("name", "onDownloadStatus");
                                 message.put("download_status",true);
@@ -501,9 +505,9 @@ public class PlayerLayout extends PlayerView implements  DownloadTracker.Listene
                             }
                         }else if(downloadTracker.isDownloaded(Uri.parse(url))){
                             if(downloadTracker.downloadManager.isIdle()) {
-                                DownloadApplication application = new DownloadApplication(activity, context);
+                                DownloadApplication application = new DownloadApplication(activity, context,userId);
                                 useExtensionRenderers = application.useExtensionRenderers();
-                                downloadTracker = application.getDownloadTracker();
+                                downloadTracker = application.getDownloadTracker(userId);
                                 downloadTracker.removeMediaUrl(Uri.parse(url));
                                 downloadTracker.addListener(this::run);
                                 message.put("download_status", false);
@@ -570,12 +574,12 @@ public class PlayerLayout extends PlayerView implements  DownloadTracker.Listene
         activity.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
     }
     private DataSource.Factory buildDataSourceFactory() {
-        return new DownloadApplication(context).buildDataSourceFactory();
+        return new DownloadApplication(activity,context,userId).buildDataSourceFactory(userId);
     }
     private void updateMediaSource() {
-        DownloadApplication application =new DownloadApplication(activity,context);
+        DownloadApplication application =new DownloadApplication(activity,context,userId);
         useExtensionRenderers = application.useExtensionRenderers();
-        downloadTracker = application.getDownloadTracker();
+        downloadTracker = application.getDownloadTracker(userId);
         downloadTracker.addListener(this);
         /* Produces DataSource instances through which media data is loaded. */
         DataSource.Factory dataSourceFactory = buildDataSourceFactory();
@@ -586,14 +590,16 @@ public class PlayerLayout extends PlayerView implements  DownloadTracker.Listene
          * https://tools.ietf.org/html/rfc8216
          */
                if(downloadTracker.isDownloaded(Uri.parse(this.url))){
-//            MediaSource mediaSource = new HlsMediaSource.Factory(dataSourceFactory)
-//                    .createMediaSource(Uri.parse(url));
+
             mPlayerView.prepare(getMediaSource(Uri.parse(url)),true,false);
+
         }else
         if(this.url.contains(".m3u8") || this.url.contains(".m3u")) {
             MediaSource videoSource;
             videoSource = new HlsMediaSource.Factory(dataSourceFactory).createMediaSource(Uri.parse(this.url));
-            mPlayerView.prepare(videoSource);
+            if(mPlayerView!=null) {
+                mPlayerView.prepare(videoSource);
+            }
         } else {
             MediaSource videoSource;
             videoSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(Uri.parse(this.url));
@@ -637,9 +643,9 @@ public class PlayerLayout extends PlayerView implements  DownloadTracker.Listene
         } catch (Exception e) { /* ignore */ }
     }
     public  void removeMedia(){
-        DownloadApplication application =new DownloadApplication(activity,context);
+        DownloadApplication application =new DownloadApplication(activity,context,userId);
         useExtensionRenderers = application.useExtensionRenderers();
-        downloadTracker = application.getDownloadTracker();
+        downloadTracker = application.getDownloadTracker(userId);
         downloadTracker.addListener(this);
          ProgressDialog downloadProgressDialog;
         downloadProgressDialog = new ProgressDialog(activity);
@@ -759,9 +765,9 @@ public class PlayerLayout extends PlayerView implements  DownloadTracker.Listene
     };
     public void onDownloadTrackSelectionPressed() {
         Log.e("djhfkjdsf","dsgmhnfdkjg");
-        DownloadApplication application =new DownloadApplication(activity,context);
+        DownloadApplication application =new DownloadApplication(activity,context,userId);
         useExtensionRenderers = application.useExtensionRenderers();
-        downloadTracker = application.getDownloadTracker();
+        downloadTracker = application.getDownloadTracker(userId);
         downloadTracker.addListener(this);
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
 //            hideVirtualButtons();
@@ -773,7 +779,7 @@ public class PlayerLayout extends PlayerView implements  DownloadTracker.Listene
             progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
             progress.setIndeterminate(true);
             progress.show();
-            RenderersFactory renderersFactory = new DownloadApplication(activity, context)
+            RenderersFactory renderersFactory = new DownloadApplication(activity, context,userId)
                     .buildRenderersFactory(true);
             downloadTracker.toggleDownload(
                     activity,
@@ -883,16 +889,20 @@ public class PlayerLayout extends PlayerView implements  DownloadTracker.Listene
            // hideVirtualButtons();
             Log.e("dfgsdfghfh","Fgfd");
            // showVirtualButtons();
+            TinyDB tinyDB=new TinyDB(activity);
+            tinyDB.remove("userId");
             isBound = false;
             mPlayerView.stop(true);
 
             mPlayerView.release();
+            downloadTracker=null;
 
             doUnbindMediaNotificationManagerService();
 
             cleanPlayerNotification();
 
             activePlayer = null;
+            application.clearCache();
 
         } catch (Exception e) { /* ignore */ }
     }

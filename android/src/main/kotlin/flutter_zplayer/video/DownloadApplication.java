@@ -18,6 +18,7 @@ package flutter_zplayer.video;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
+import android.net.Uri;
 
 import com.google.android.exoplayer2.BuildConfig;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
@@ -27,8 +28,11 @@ import com.google.android.exoplayer2.database.ExoDatabaseProvider;
 import com.google.android.exoplayer2.offline.ActionFileUpgradeUtil;
 import com.google.android.exoplayer2.offline.DefaultDownloadIndex;
 import com.google.android.exoplayer2.offline.DefaultDownloaderFactory;
+import com.google.android.exoplayer2.offline.DownloadHelper;
 import com.google.android.exoplayer2.offline.DownloadManager;
+import com.google.android.exoplayer2.offline.DownloadRequest;
 import com.google.android.exoplayer2.offline.DownloaderConstructorHelper;
+import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.ui.DownloadNotificationHelper;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
@@ -46,6 +50,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.function.Function;
 
+import flutter_zplayer.TinyDB;
+
 /**
  * Placeholder application to facilitate overriding Application methods for debugging and testing.
  */
@@ -53,17 +59,26 @@ public class DownloadApplication extends Application {
   Activity activity;
   private static SimpleCache sDownloadCache;
   Context context;
+  String userId;
   Function downloadStatusCallBack;
-  DownloadApplication(Activity activity, Context context){
+  DownloadApplication(Activity activity, Context context,String userId){
     this.activity=activity;
     this.context=context;
+    this.userId=userId;
   }
-  public  SimpleCache getInstance(Context context) {
-    if (sDownloadCache == null) sDownloadCache = new SimpleCache(new  File(getDownloadDirectory(), DOWNLOAD_CONTENT_DIRECTORY), new NoOpCacheEvictor(), new ExoDatabaseProvider(context));
-    return sDownloadCache;
+  public  SimpleCache getInstance(Context context,String userId) {
+    if (sDownloadCache == null)
+      sDownloadCache = new SimpleCache(new File(getDownloadDirectory(), DOWNLOAD_CONTENT_DIRECTORY + "/" + userId), new NoOpCacheEvictor(), new ExoDatabaseProvider(context));
+
+      return sDownloadCache;
+  }
+  public void clearCache(){
+    sDownloadCache.release();
+    sDownloadCache=null;
   }
   DownloadApplication(Context context){
     this.context=context;
+    this.userId=userId;
   }
   public static final String DOWNLOAD_NOTIFICATION_CHANNEL_ID = "download_channel";
 
@@ -88,10 +103,10 @@ public class DownloadApplication extends Application {
   }
 
   /** Returns a {@link DataSource.Factory}. */
-  public DataSource.Factory buildDataSourceFactory() {
+  public DataSource.Factory buildDataSourceFactory(String userId) {
     DefaultDataSourceFactory upstreamFactory =
             new DefaultDataSourceFactory(context, buildHttpDataSourceFactory());
-    return buildReadOnlyCacheDataSource(upstreamFactory, getDownloadCache());
+    return buildReadOnlyCacheDataSource(upstreamFactory, getDownloadCache(userId));
   }
 
   /** Returns a {@link HttpDataSource.Factory}. */
@@ -125,46 +140,41 @@ public class DownloadApplication extends Application {
   }
 
   public DownloadManager getDownloadManager() {
-    initDownloadManager();
+    initDownloadManager(userId);
     return downloadManager;
   }
 
-  public DownloadTracker getDownloadTracker() {
-    initDownloadManager();
+  public DownloadTracker getDownloadTracker(String userId) {
+    initDownloadManager(userId);
     return downloadTracker;
   }
 
-  protected synchronized Cache getDownloadCache() {
-//    if (downloadCache == null) {
-//      File downloadContentDirectory = new File(getDownloadDirectory(), DOWNLOAD_CONTENT_DIRECTORY);
-//      Log.e("dkhnfgksdnf","zdkfnjsdk");
-//        downloadCache =
-//                new SimpleCache(downloadContentDirectory, new NoOpCacheEvictor(), getDatabaseProvider());
-//
-//    }
-    return getInstance(context);
-    //return VideoCache.getInstance(context);
+  protected synchronized Cache getDownloadCache(String user) {
+    return getInstance(context,user);
   }
 
-  private synchronized void initDownloadManager() {
+  private synchronized void initDownloadManager(String userId) {
     if (downloadManager == null) {
+      TinyDB tinyDB=new TinyDB(context);
+      userId=tinyDB.getString("userId");
+      Log.e("jhndsjfds",userId);
       DefaultDownloadIndex downloadIndex = new DefaultDownloadIndex(getDatabaseProvider());
       upgradeActionFile(
-              DOWNLOAD_ACTION_FILE, downloadIndex, /* addNewDownloadsAsCompleted= */ false);
+              DOWNLOAD_ACTION_FILE, downloadIndex, /* addNewDownloadsAsCompleted= */ false,userId);
       upgradeActionFile(
-              DOWNLOAD_TRACKER_ACTION_FILE, downloadIndex, /* addNewDownloadsAsCompleted= */ true);
+              DOWNLOAD_TRACKER_ACTION_FILE, downloadIndex, /* addNewDownloadsAsCompleted= */ true,userId);
       DownloaderConstructorHelper downloaderConstructorHelper =
-              new DownloaderConstructorHelper(getDownloadCache(), buildHttpDataSourceFactory());
+              new DownloaderConstructorHelper(getDownloadCache(userId), buildHttpDataSourceFactory());
       downloadManager =
               new DownloadManager(
                       context, downloadIndex, new DefaultDownloaderFactory(downloaderConstructorHelper));
       downloadTracker =
-              new DownloadTracker(/* context= */ context, buildDataSourceFactory(), downloadManager,activity);
+              new DownloadTracker(/* context= */ context, buildDataSourceFactory(userId), downloadManager,activity);
     }
   }
 
   private void upgradeActionFile(
-          String fileName, DefaultDownloadIndex downloadIndex, boolean addNewDownloadsAsCompleted) {
+          String fileName, DefaultDownloadIndex downloadIndex, boolean addNewDownloadsAsCompleted,String userId) {
     try {
       ActionFileUpgradeUtil.upgradeAndDelete(
               new File(getDownloadDirectory(), fileName),

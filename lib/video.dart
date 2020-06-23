@@ -30,6 +30,7 @@ class Video extends StatefulWidget {
   final bool onDownloadTrackPressed;
   final String preferredAudioLanguage;
   final bool isLiveStream;
+  final String userId;
   final double position;
   final Function onViewCreated;
   final PlayerState desiredState;
@@ -40,7 +41,7 @@ class Video extends StatefulWidget {
       this.showControls = true,
         this.onTrackPressed,
         this.onDownloadTrackPressed,
-      this.url,
+      this.url,this.userId,
       this.title = "",
       this.subtitle = "",
       this.preferredAudioLanguage = "mul",
@@ -84,6 +85,7 @@ class _VideoState extends State<Video> {
             "autoPlay": widget.autoPlay,
             "showControls": widget.showControls,
             "url": widget.url,
+            "userId":widget.userId,
             "title": widget.title ?? "",
             "subtitle": widget.subtitle ?? "",
             "preferredAudioLanguage": widget.preferredAudioLanguage ?? "mul",
