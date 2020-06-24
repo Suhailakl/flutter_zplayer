@@ -580,6 +580,7 @@ public class PlayerLayout extends PlayerView implements  DownloadTracker.Listene
         return new DownloadApplication(activity,context,userId).buildDataSourceFactory(userId);
     }
     private void updateMediaSource() {
+        hideVirtualButtons();
         DownloadApplication application =new DownloadApplication(activity,context,userId);
         useExtensionRenderers = application.useExtensionRenderers();
         downloadTracker = application.getDownloadTracker(userId);
@@ -658,6 +659,7 @@ public class PlayerLayout extends PlayerView implements  DownloadTracker.Listene
         downloadProgressDialog.setIndeterminate(true);
         downloadProgressDialog.show();
         downloadTracker.removeMedia(Uri.parse(url),downloadProgressDialog);
+        hideVirtualButtons();
     }
 //    public  void onDownloadList(){
 //        Log.e("dsfhjdsjf","dgskjhdsng");
