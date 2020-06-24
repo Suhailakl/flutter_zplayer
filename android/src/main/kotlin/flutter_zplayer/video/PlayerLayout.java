@@ -255,6 +255,7 @@ public class PlayerLayout extends PlayerView implements  DownloadTracker.Listene
         Log.e("zxfjhnsdjnfh","sfzdlkjsdkf");
          application =new DownloadApplication(activity,context,userId);
         useExtensionRenderers = application.useExtensionRenderers();
+        Log.e("fnjkds ",url);
         downloadTracker = application.getDownloadTracker(userId);
         downloadTracker.addListener(this);
         trackSelector = new DefaultTrackSelector(context);
@@ -484,6 +485,8 @@ public class PlayerLayout extends PlayerView implements  DownloadTracker.Listene
     private void listenForPlayerTimeChange() {
         final Handler handler = new Handler();
         final boolean[] isStarted = {false};
+        TinyDB tinyDB=new TinyDB(context);
+        String uid=tinyDB.getString("userId");
         final Runnable runnable = new Runnable() {
             @Override
             public void run() {
@@ -494,11 +497,11 @@ public class PlayerLayout extends PlayerView implements  DownloadTracker.Listene
                         JSONObject message = new JSONObject();
                         if(downloadTracker.isDownloaded(Uri.parse(url))&&downloadList!=null&&downloadList.size()!=0){
 
-                            if(downloadList.contains(url+"?status=completed")){
+                            if(downloadList.contains(url+"?status=completed&"+uid)){
                                 message.put("name", "onDownloadStatus");
                                 message.put("download_status",true);
                                 eventSink.success(message);
-                            }else if(downloadList.contains(url+"?status=downloading")){
+                            }else if(downloadList.contains(url+"?status=downloading&"+uid)){
                                 message.put("name", "onDownloading");
                                 message.put("onDownloading",true);
                                 eventSink.success(message);
@@ -889,8 +892,6 @@ public class PlayerLayout extends PlayerView implements  DownloadTracker.Listene
            // hideVirtualButtons();
             Log.e("dfgsdfghfh","Fgfd");
            // showVirtualButtons();
-            TinyDB tinyDB=new TinyDB(activity);
-            tinyDB.remove("userId");
             isBound = false;
             mPlayerView.stop(true);
 
@@ -902,7 +903,7 @@ public class PlayerLayout extends PlayerView implements  DownloadTracker.Listene
             cleanPlayerNotification();
 
             activePlayer = null;
-            application.clearCache();
+           // application.clearCache();
 
         } catch (Exception e) { /* ignore */ }
     }
@@ -951,6 +952,7 @@ public class PlayerLayout extends PlayerView implements  DownloadTracker.Listene
         @Override
         public void onStop() {
             pause();
+          //  application.clearCache();
           // showVirtualButtons();
           //  hideVirtualButtons();
         }

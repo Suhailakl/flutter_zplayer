@@ -67,13 +67,16 @@ public class DownloadApplication extends Application {
     this.userId=userId;
   }
   public  SimpleCache getInstance(Context context,String userId) {
-    if (sDownloadCache == null)
-      sDownloadCache = new SimpleCache(new File(getDownloadDirectory(), DOWNLOAD_CONTENT_DIRECTORY + "/" + userId), new NoOpCacheEvictor(), new ExoDatabaseProvider(context));
-
+    if (sDownloadCache == null) {
+      Log.e("dsjkhnfds","ldkfjnkds");
+      TinyDB tinyDB=new TinyDB(context);
+      String uid=tinyDB.getString("userId");
+      sDownloadCache = new SimpleCache(new File(getDownloadDirectory(), DOWNLOAD_CONTENT_DIRECTORY + "/" + uid), new NoOpCacheEvictor(), new ExoDatabaseProvider(context));
+    }
       return sDownloadCache;
   }
   public void clearCache(){
-    sDownloadCache.release();
+    //sDownloadCache.release();
     sDownloadCache=null;
   }
   DownloadApplication(Context context){

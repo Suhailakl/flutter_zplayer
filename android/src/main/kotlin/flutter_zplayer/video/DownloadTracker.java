@@ -145,18 +145,19 @@ public class DownloadTracker{
     }
     public  void removeMedia( Uri uri,ProgressDialog progressDialog){
         Download download = downloads.get(uri);
+        TinyDB tinyDB=new TinyDB(context);
+        String uid=tinyDB.getString("userId");
         DownldService.sendRemoveDownload(
                 context, DownldService.class, download.request.id, /* foreground= */ false);
-        TinyDB tinyDB=new TinyDB(context);
         ArrayList<String> data=tinyDB.getListString("urls");
-        if(data!=null&&data.size()!=0&&data.contains(uri.toString()+"?status=downloading")){
-            if(data.remove(uri.toString()+"?status=downloading")){
+        if(data!=null&&data.size()!=0&&data.contains(uri.toString()+"?status=downloading&"+uid)){
+            if(data.remove(uri.toString()+"?status=downloading&"+uid)){
                 tinyDB.putListString("urls",data);
             }
 
         }
-        if(data!=null&&data.size()!=0&&data.contains(uri.toString()+"?status=completed")){
-            if(data.remove(uri.toString()+"?status=completed")){
+        if(data!=null&&data.size()!=0&&data.contains(uri.toString()+"?status=completed&"+uid)){
+            if(data.remove(uri.toString()+"?status=completed&"+uid)){
                 tinyDB.putListString("urls",data);
             }
 
@@ -169,20 +170,21 @@ public class DownloadTracker{
 
     }
     public  void removeMediaUrl( Uri uri){
+        TinyDB tinyDB=new TinyDB(context);
+        String uid=tinyDB.getString("userId");
         Download download = downloads.get(uri);
         DownldService.sendRemoveDownload(
                 context, DownldService.class, download.request.id, /* foreground= */ false);
-        TinyDB tinyDB=new TinyDB(context);
         ArrayList<String> data=tinyDB.getListString("urls");
 
-        if(data!=null&&data.size()!=0&&data.contains(uri.toString()+"?status=downloading")){
-            if(data.remove(uri.toString()+"?status=downloading")){
+        if(data!=null&&data.size()!=0&&data.contains(uri.toString()+"?status=downloading&"+uid)){
+            if(data.remove(uri.toString()+"?status=downloading&"+uid)){
                 tinyDB.putListString("urls",data);
             }
 
         }
-        if(data!=null&&data.size()!=0&&data.contains(uri.toString()+"?status=completed")){
-            if(data.remove(uri.toString()+"?status=completed")){
+        if(data!=null&&data.size()!=0&&data.contains(uri.toString()+"?status=completed&"+uid)){
+            if(data.remove(uri.toString()+"?status=completed&"+uid)){
                 tinyDB.putListString("urls",data);
             }
 
@@ -201,11 +203,11 @@ public class DownloadTracker{
         this.activity=activity;
         this.trackProgressDialog=trackProgressDialog;
         Download download = downloads.get(uri);
-        if (download != null) {
-
-            DownldService.sendRemoveDownload(
-                    context, DownldService.class, download.request.id, /* foreground= */ false);
-        } else {
+//        if (download != null) {
+//
+//            DownldService.sendRemoveDownload(
+//                    context, DownldService.class, download.request.id, /* foreground= */ false);
+//        } else {
             Log.e("kbndfbkdnf",":dnfknsd");
             if (startDownloadDialogHelper != null) {
                 startDownloadDialogHelper.release();
@@ -215,7 +217,7 @@ public class DownloadTracker{
                     new StartDownloadDialogHelper(
 
                             fragmentManager, getDownloadHelper(uri, extension, renderersFactory), name,trackProgressDialog,onDismissListener);
-        }
+        //}
     }
 
     private void loadDownloads() {
