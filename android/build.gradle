@@ -1,4 +1,4 @@
-group 'flutter_zplayer'
+group 'com.flutter_zplayer'
 version '1.0.3'
 
 buildscript {

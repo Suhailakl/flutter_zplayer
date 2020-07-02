@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="flutter_zplayer">
+    package="com.flutter_zplayer">
 
     <uses-permission android:name="android.permission.INTERNET"/>
 
@@ -17,10 +17,10 @@
         android:allowBackup="false"
         tools:ignore="UnusedAttribute"
         tools:replace="android:allowBackup">
-        <service android:name="flutter_zplayer.video.DownldService"
+        <service android:name="com.flutter_zplayer.video.DownldService"
             android:exported="false">
             <intent-filter>
-                <action android:name="flutter_zplayer.video.DownldService.action.RESTART"/>
+                <action android:name="com.flutter_zplayer.video.DownldService.action.RESTART"/>
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </service>
