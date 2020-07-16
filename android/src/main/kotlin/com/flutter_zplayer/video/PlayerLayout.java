@@ -678,9 +678,7 @@ public class PlayerLayout extends PlayerView implements  DownloadTracker.Listene
                                 trackSelector,
                                 dismissedDialog-> {
                     isShowingTrackSelectionDialog = false;
-//                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                                        hideVirtualButtons();
-//                                    };
 
 
                 });
@@ -704,6 +702,10 @@ public class PlayerLayout extends PlayerView implements  DownloadTracker.Listene
                         message1.put("name", "onDownloading");
                         message1.put("onDownloading", false);
                         eventSink.success(message1);
+                            JSONObject message2= new JSONObject();
+                            message2.put("name", "onDownloadComplete");
+                            message2.put("onDownloadComplete", downloadTracker == null);
+                            eventSink.success(message2);
                         Toast.makeText(context, "Download Finished", Toast.LENGTH_SHORT).show();
                             updateMediaSource();
                     } catch (JSONException e) {
@@ -763,9 +765,6 @@ public class PlayerLayout extends PlayerView implements  DownloadTracker.Listene
         useExtensionRenderers = application.useExtensionRenderers();
         downloadTracker = application.getDownloadTracker(userId);
         downloadTracker.addListener(this);
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-//            hideVirtualButtons();
-//        }
         if(!isShowingDownloadTrackSelectionDialog) {
             isShowingDownloadTrackSelectionDialog=true;
             ProgressDialog progress = new ProgressDialog(activity);
@@ -784,9 +783,7 @@ public class PlayerLayout extends PlayerView implements  DownloadTracker.Listene
                     "hls",
                     renderersFactory,
                     dialogInterface ->{    isShowingDownloadTrackSelectionDialog=false;
-//                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                             hideVirtualButtons();
-//                        }
                         }
                         );
 
@@ -880,7 +877,6 @@ public class PlayerLayout extends PlayerView implements  DownloadTracker.Listene
     @Override
     public void onDestroy() {
         try {
-           // hideVirtualButtons();
             Log.e("dfgsdfghfh","Fgfd");
            // showVirtualButtons();
             isBound = false;
@@ -925,7 +921,6 @@ public class PlayerLayout extends PlayerView implements  DownloadTracker.Listene
         public void onPause() {
 
             pause();
-         //   hideVirtualButtons();
         }
 
         @Override
@@ -943,9 +938,6 @@ public class PlayerLayout extends PlayerView implements  DownloadTracker.Listene
         @Override
         public void onStop() {
             pause();
-          //  application.clearCache();
-          // showVirtualButtons();
-          //  hideVirtualButtons();
         }
     }
 
@@ -961,7 +953,6 @@ public class PlayerLayout extends PlayerView implements  DownloadTracker.Listene
         public void onSeekProcessed(EventTime eventTime) {
 
             try {
-            //    hideVirtualButtons();
                 JSONObject message = new JSONObject();
 
                 message.put("name", "onSeek");

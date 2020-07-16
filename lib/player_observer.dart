@@ -24,7 +24,17 @@ mixin PlayerObserver {
   void onPlay() {/* user implementation */}
   /// Override this method to get notifications when media has finished playing.
   void onComplete() {/* user implementation */}
-
+  void onDownloadComplete(bool isDownloaded) {
+    if(isDownloaded) {
+      Timer.periodic(Duration(milliseconds: 5), (timer) async {
+        await SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
+        if (timer.tick == 250) {
+          print("dsxfjhsdf");
+          timer.cancel();
+        }
+      });
+    }
+  }
   /// Override this method to get update when playhead moves. This method
   /// fires every second with [position] as seconds.
   void onTime(int position) {/* user implementation */}
@@ -63,6 +73,9 @@ mixin PlayerObserver {
       case "onComplete":
         onComplete();
         break;
+      case "onDownloadComplete":
+        onDownloadComplete(event["onDownloadComplete"]);
+        break;
       case "onDownloading":
         onDownloading(event["onDownloading"]);
         break;
@@ -71,6 +84,7 @@ mixin PlayerObserver {
         onTime(event["time"].toInt());
         break;
       case "onDownloadStatus":
+
         onDownloadStatus(event["download_status"]);
         break;
 

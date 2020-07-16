@@ -332,22 +332,10 @@ public class DownloadTracker{
                             /* onDismissListener= */  dismissedDialog-> {
                                 Log.e("jdsbnfjdsnbjf","dmsbnfjsd");
                                 onDismissListener.onDismiss(dismissedDialog);
-//                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-//                                    hideVirtualButtons();
-//                                }
+
                             });
             trackSelectionDialog.show(fragmentManager, /* tag= */ null);
         }
-//        @TargetApi(19)
-//        private void hideVirtualButtons() {
-//            activity.getWindow().getDecorView().setSystemUiVisibility(
-//                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-//                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-//                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-//                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-//                            | View.SYSTEM_UI_FLAG_FULLSCREEN
-//                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
-//        }
         @Override
         public void onPrepareError(DownloadHelper helper, IOException e) {
             Toast.makeText(context, R.string.download_start_error, Toast.LENGTH_LONG).show();
