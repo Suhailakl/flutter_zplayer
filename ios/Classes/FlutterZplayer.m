@@ -1,8 +1,8 @@
-#import "FlutterPlayoutPlugin.h"
-#import <flutter_playout/flutter_playout-Swift.h>
+#import "FlutterzPlayer.h"
+#import <flutter_zplayer/flutter_zplayer-Swift.h>
 
-@implementation SwiftFlutterzPlayer
+@implementation FlutterzPlayerPlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
-  [SwiftFlutterPlayoutPlugin registerWithRegistrar:registrar];
+  [SwiftFlutterzPlayer registerWithRegistrar:registrar];
 }
 @end
