@@ -1,4 +1,4 @@
 #import <Flutter/Flutter.h>
 
-@interface FlutterPlayoutPlugin : NSObject<FlutterPlugin>
+@interface FlutterzPlayerPlugin : NSObject<FlutterPlugin>
 @end
