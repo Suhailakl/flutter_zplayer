@@ -22,7 +22,9 @@ import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.SurfaceView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -57,6 +59,8 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.JSONMethodCodec;
+import kotlin.jvm.internal.Intrinsics;
+
 import com.flutter_zplayer.FlutterAVPlayer;
 import com.flutter_zplayer.MediaNotificationManagerService;
 import com.flutter_zplayer.PlayerNotificationUtil;
@@ -183,7 +187,7 @@ public class PlayerLayout extends PlayerView implements  DownloadTracker.Listene
         this.messenger = messenger;
 
         this.viewId = id;
-       // App app = (App)getApplicationContext();
+        // App app = (App)getApplicationContext();
 
 
         try {
@@ -203,6 +207,7 @@ public class PlayerLayout extends PlayerView implements  DownloadTracker.Listene
             this.autoPlay = args.getBoolean("autoPlay");
 
             this.showControls = args.getBoolean("showControls");
+
             TinyDB tinyDB=new TinyDB(activity);
             tinyDB.putString("userId",userId);
             new EventChannel(
@@ -213,9 +218,10 @@ public class PlayerLayout extends PlayerView implements  DownloadTracker.Listene
             lbm.registerReceiver(receiver, new IntentFilter("download_status"));
             initPlayer();
 
+
         } catch (Exception e) { /* ignore */ }
         tinyDB=new TinyDB(context);
-         downloadList=tinyDB.getListString("urls");
+        downloadList=tinyDB.getListString("urls");
         instance = this;
         /* release previous instance */
         if (activePlayer != null) {
@@ -240,7 +246,7 @@ public class PlayerLayout extends PlayerView implements  DownloadTracker.Listene
 
     private void initPlayer() {
         Log.e("zxfjhnsdjnfh","sfzdlkjsdkf");
-         application =new DownloadApplication(activity,context,userId);
+        application =new DownloadApplication(activity,context,userId);
         useExtensionRenderers = application.useExtensionRenderers();
         Log.e("fnjkds ",url);
         downloadTracker = application.getDownloadTracker(userId);
@@ -248,7 +254,7 @@ public class PlayerLayout extends PlayerView implements  DownloadTracker.Listene
         trackSelector = new DefaultTrackSelector(context);
         trackSelector.setParameters(
                 trackSelector.buildUponParameters()
-                        );
+        );
 
 
         mPlayerView = new SimpleExoPlayer.Builder(context).setTrackSelector(trackSelector).build();
@@ -266,13 +272,28 @@ public class PlayerLayout extends PlayerView implements  DownloadTracker.Listene
 
 
         this.setPlayer(mPlayerView);
+        this.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.e("samjhjsahfnsadf","skfjidsafdf");
+                JSONObject message = new JSONObject();
+                try {
+                    message.put("name", "ClickListener");
+                    message.put("onClicked",true);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                eventSink.success(message);
+            }
+        });
         listenForPlayerTimeChange();
         updateMediaSource();
-    //    setupMediaSession();
+        //    setupMediaSession();
 //
 
 
     }
+
 
     private void setupMediaSession() {
 
@@ -480,44 +501,44 @@ public class PlayerLayout extends PlayerView implements  DownloadTracker.Listene
                 try {
                     if(eventSink!=null&&!isStarted[0]){
                         isStarted[0] =true;
-                    try {
-                        JSONObject message = new JSONObject();
-                        if(downloadTracker.isDownloaded(Uri.parse(url))&&downloadList!=null&&downloadList.size()!=0){
+                        try {
+                            JSONObject message = new JSONObject();
+                            if(downloadTracker.isDownloaded(Uri.parse(url))&&downloadList!=null&&downloadList.size()!=0){
 
-                            if(downloadList.contains(url+"?status=completed&"+uid)){
-                                message.put("name", "onDownloadStatus");
-                                message.put("download_status",true);
-                                eventSink.success(message);
-                            }else if(downloadList.contains(url+"?status=downloading&"+uid)){
-                                message.put("name", "onDownloading");
-                                message.put("onDownloading",true);
-                                eventSink.success(message);
-                            }
-                        }else if(downloadTracker.isDownloaded(Uri.parse(url))){
-                            if(downloadTracker.downloadManager.isIdle()) {
-                                DownloadApplication application = new DownloadApplication(activity, context,userId);
-                                useExtensionRenderers = application.useExtensionRenderers();
-                                downloadTracker = application.getDownloadTracker(userId);
-                                downloadTracker.removeMediaUrl(Uri.parse(url));
-                                downloadTracker.addListener(this::run);
-                                message.put("download_status", false);
-                                eventSink.success(message);
+                                if(downloadList.contains(url+"?status=completed&"+uid)){
+                                    message.put("name", "onDownloadStatus");
+                                    message.put("download_status",true);
+                                    eventSink.success(message);
+                                }else if(downloadList.contains(url+"?status=downloading&"+uid)){
+                                    message.put("name", "onDownloading");
+                                    message.put("onDownloading",true);
+                                    eventSink.success(message);
+                                }
+                            }else if(downloadTracker.isDownloaded(Uri.parse(url))){
+                                if(downloadTracker.downloadManager.isIdle()) {
+                                    DownloadApplication application = new DownloadApplication(activity, context,userId);
+                                    useExtensionRenderers = application.useExtensionRenderers();
+                                    downloadTracker = application.getDownloadTracker(userId);
+                                    downloadTracker.removeMediaUrl(Uri.parse(url));
+                                    downloadTracker.addListener(this::run);
+                                    message.put("download_status", false);
+                                    eventSink.success(message);
+                                }else{
+                                    JSONObject message1 = new JSONObject();
+                                    message1.put("name", "onDownloading");
+                                    message1.put("onDownloading", true);
+                                    eventSink.success(message1);
+                                }
                             }else{
-                                JSONObject message1 = new JSONObject();
-                                message1.put("name", "onDownloading");
-                                message1.put("onDownloading", true);
-                                eventSink.success(message1);
+                                message.put("download_status",false);
+                                eventSink.success(message);
                             }
-                        }else{
-                            message.put("download_status",false);
-                            eventSink.success(message);
+
+
+                        } catch (JSONException e) {
+                            Log.e(TAG, "onDownloadStatus: " + e.getMessage(), e);
                         }
-
-
-                    } catch (JSONException e) {
-                        Log.e(TAG, "onDownloadStatus: " + e.getMessage(), e);
                     }
-}
                     if (mPlayerView.isPlaying()) {
 
                         JSONObject message = new JSONObject();
@@ -582,7 +603,7 @@ public class PlayerLayout extends PlayerView implements  DownloadTracker.Listene
          * Check for HLS playlist file extension ( .m3u8 or .m3u )
          * https://tools.ietf.org/html/rfc8216
          */
-               if(downloadTracker.isDownloaded(Uri.parse(this.url))){
+        if(downloadTracker.isDownloaded(Uri.parse(this.url))){
 
             mPlayerView.prepare(getMediaSource(Uri.parse(url)),true,false);
 
@@ -604,8 +625,8 @@ public class PlayerLayout extends PlayerView implements  DownloadTracker.Listene
     private MediaSource getMediaSource(Uri uri) {
         DownloadRequest downloadRequest;
         try{
-             downloadRequest = downloadTracker
-                            .getDownloadRequest(uri);
+            downloadRequest = downloadTracker
+                    .getDownloadRequest(uri);
             if (downloadRequest != null) {
                 Log.e("dgfhbdsfjnfd",downloadRequest.uri.toString());
                 return DownloadHelper.createMediaSource(downloadRequest, buildDataSourceFactory());
@@ -616,7 +637,7 @@ public class PlayerLayout extends PlayerView implements  DownloadTracker.Listene
         }catch(Exception e){
             Log.e("xzfjhdsfkjnds",e.getMessage().toString());
         }
-      return  null;
+        return  null;
 
     }
     public void onMediaChanged(Object arguments) {
@@ -640,7 +661,7 @@ public class PlayerLayout extends PlayerView implements  DownloadTracker.Listene
         useExtensionRenderers = application.useExtensionRenderers();
         downloadTracker = application.getDownloadTracker(userId);
         downloadTracker.addListener(this);
-         ProgressDialog downloadProgressDialog;
+        ProgressDialog downloadProgressDialog;
         downloadProgressDialog = new ProgressDialog(activity);
         downloadProgressDialog.setMessage("Deleting...");
         downloadProgressDialog.setCancelable(false);
@@ -650,7 +671,7 @@ public class PlayerLayout extends PlayerView implements  DownloadTracker.Listene
         downloadTracker.removeMedia(Uri.parse(url),downloadProgressDialog);
         hideVirtualButtons();
     }
-//    public  void onDownloadList(){
+    //    public  void onDownloadList(){
 //        Log.e("dsfhjdsjf","dgskjhdsng");
 //        try{
 //            JSONObject message = new JSONObject();
@@ -677,11 +698,11 @@ public class PlayerLayout extends PlayerView implements  DownloadTracker.Listene
                         TrackSelectionDialog.createForTrackSelector(
                                 trackSelector,
                                 dismissedDialog-> {
-                    isShowingTrackSelectionDialog = false;
-                                       hideVirtualButtons();
+                                    isShowingTrackSelectionDialog = false;
+                                    hideVirtualButtons();
 
 
-                });
+                                });
                 trackSelectionDialog.show(activity.getFragmentManager(), /* tag= */ null);
             }
 
@@ -694,23 +715,23 @@ public class PlayerLayout extends PlayerView implements  DownloadTracker.Listene
                 switch (intent.getStringExtra("status")){
                     case "download_finished":
                         try {
-                        JSONObject message = new JSONObject();
-                        message.put("name", "onDownloadStatus");
-                        message.put("download_status", true);
-                        eventSink.success(message);
-                        JSONObject message1 = new JSONObject();
-                        message1.put("name", "onDownloading");
-                        message1.put("onDownloading", false);
-                        eventSink.success(message1);
+                            JSONObject message = new JSONObject();
+                            message.put("name", "onDownloadStatus");
+                            message.put("download_status", true);
+                            eventSink.success(message);
+                            JSONObject message1 = new JSONObject();
+                            message1.put("name", "onDownloading");
+                            message1.put("onDownloading", false);
+                            eventSink.success(message1);
                             JSONObject message2= new JSONObject();
                             message2.put("name", "onDownloadComplete");
                             message2.put("onDownloadComplete", downloadTracker == null);
                             eventSink.success(message2);
-                        Toast.makeText(context, "Download Finished", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, "Download Finished", Toast.LENGTH_SHORT).show();
                             updateMediaSource();
-                    } catch (JSONException e) {
-                        android.util.Log.e(TAG, "onDownloadStatus: " + e.getMessage(), e);
-                    }
+                        } catch (JSONException e) {
+                            android.util.Log.e(TAG, "onDownloadStatus: " + e.getMessage(), e);
+                        }
                         break;
                     case "download_deleted":
                         try {
@@ -745,7 +766,7 @@ public class PlayerLayout extends PlayerView implements  DownloadTracker.Listene
                         }
                         break;
 
-                        case "downloading":
+                    case "downloading":
                         try {
                             JSONObject message = new JSONObject();
                             message.put("name", "onDownloading");
@@ -756,8 +777,8 @@ public class PlayerLayout extends PlayerView implements  DownloadTracker.Listene
                         }
                         break;
                 }
-                }
             }
+        }
     };
     public void onDownloadTrackSelectionPressed() {
         Log.e("djhfkjdsf","dsgmhnfdkjg");
@@ -783,9 +804,9 @@ public class PlayerLayout extends PlayerView implements  DownloadTracker.Listene
                     "hls",
                     renderersFactory,
                     dialogInterface ->{    isShowingDownloadTrackSelectionDialog=false;
-                            hideVirtualButtons();
-                        }
-                        );
+                        hideVirtualButtons();
+                    }
+            );
 
         }
     }
@@ -878,7 +899,7 @@ public class PlayerLayout extends PlayerView implements  DownloadTracker.Listene
     public void onDestroy() {
         try {
             Log.e("dfgsdfghfh","Fgfd");
-           // showVirtualButtons();
+            // showVirtualButtons();
             isBound = false;
             mPlayerView.stop(true);
 
@@ -890,7 +911,7 @@ public class PlayerLayout extends PlayerView implements  DownloadTracker.Listene
             cleanPlayerNotification();
 
             activePlayer = null;
-           // application.clearCache();
+            // application.clearCache();
 
         } catch (Exception e) { /* ignore */ }
     }
