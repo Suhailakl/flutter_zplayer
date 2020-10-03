@@ -22,6 +22,7 @@ mixin PlayerObserver {
 
   /// Override this method to get notifications when media is played.
   void onPlay() {/* user implementation */}
+  void onClick() {/* user implementation */}
   /// Override this method to get notifications when media has finished playing.
   void onComplete() {/* user implementation */}
   void onDownloadComplete(bool isDownloaded) {
@@ -62,6 +63,9 @@ mixin PlayerObserver {
       /* onPause */
       case "onPause":
         onPause();
+        break;
+      case "ClickListener":
+        onClick();
         break;
 
       /* onPlay */
