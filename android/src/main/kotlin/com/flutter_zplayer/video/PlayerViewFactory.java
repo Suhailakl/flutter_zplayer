@@ -46,7 +46,6 @@ public class PlayerViewFactory extends PlatformViewFactory {
     public PlatformView create(Context context, int id, Object args) {
 
         playerView = new PlayerView(context, activity, id, messenger, args);
-
         return playerView;
     }
 

@@ -31,9 +31,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 
+import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.PlaybackPreparer;
 import com.google.android.exoplayer2.Player;
+import com.google.android.exoplayer2.Renderer;
 import com.google.android.exoplayer2.RenderersFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.analytics.AnalyticsListener;
@@ -43,6 +45,8 @@ import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.hls.HlsMediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
+import com.google.android.exoplayer2.ui.ExoPlayerView;
 import com.google.android.exoplayer2.ui.PlayerControlView;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
@@ -68,7 +72,9 @@ import com.flutter_zplayer.PlayerState;
 import com.flutter_zplayer.R;
 import com.flutter_zplayer.TinyDB;
 
-public class PlayerLayout extends PlayerView implements  DownloadTracker.Listener,FlutterAVPlayer, EventChannel.StreamHandler, PlaybackPreparer, PlayerControlView.VisibilityListener {
+import static android.media.MediaCodec.VIDEO_SCALING_MODE_SCALE_TO_FIT;
+
+public class PlayerLayout extends ExoPlayerView implements  DownloadTracker.Listener,FlutterAVPlayer, EventChannel.StreamHandler, PlaybackPreparer, PlayerControlView.VisibilityListener {
     /**
      * The notification channel id we'll send notifications too
      */
@@ -256,9 +262,7 @@ public class PlayerLayout extends PlayerView implements  DownloadTracker.Listene
                 trackSelector.buildUponParameters()
         );
 
-
         mPlayerView = new SimpleExoPlayer.Builder(context).setTrackSelector(trackSelector).build();
-
         mPlayerView.setPlayWhenReady(this.autoPlay);
 
         mPlayerView.addAnalyticsListener(new PlayerAnalyticsEventsListener());
@@ -850,7 +854,22 @@ public class PlayerLayout extends PlayerView implements  DownloadTracker.Listene
 
         } catch (Exception e) { /* ignore */ }
     }
+    public void setVideoScale(Object arguments) {
+        try {
+                if(Boolean.parseBoolean(arguments.toString())) {
+                    Toast.makeText(activity, "Switched to fullscreen mode", Toast.LENGTH_SHORT).show();
 
+                    setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FILL);
+                    activePlayer.setVideoScalingMode(C.VIDEO_SCALING_MODE_SCALE_TO_FIT);
+                }else{
+                    Toast.makeText(activity, "Switched to normal mode", Toast.LENGTH_SHORT).show();
+                    setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);
+                }
+
+
+
+        } catch (Exception e) { /* ignore */ }
+    }
     public void seekTo(Object arguments) {
         try {
 
