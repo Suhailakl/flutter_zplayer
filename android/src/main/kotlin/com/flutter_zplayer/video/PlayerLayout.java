@@ -859,7 +859,7 @@ public class PlayerLayout extends ExoPlayerView implements  DownloadTracker.List
                 if(Boolean.parseBoolean(arguments.toString())) {
                     Toast.makeText(activity, "Switched to fullscreen mode", Toast.LENGTH_SHORT).show();
 
-                    setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FILL);
+                    setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_ZOOM);
                     activePlayer.setVideoScalingMode(C.VIDEO_SCALING_MODE_SCALE_TO_FIT);
                 }else{
                     Toast.makeText(activity, "Switched to normal mode", Toast.LENGTH_SHORT).show();
