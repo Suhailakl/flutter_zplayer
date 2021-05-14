@@ -230,7 +230,7 @@ class VideoPlayer: NSObject, FlutterPlugin, FlutterStreamHandler, FlutterPlatfor
             /* Add observer for AVPlayer status and AVPlayerItem status */
             self.player?.addObserver(self, forKeyPath: #keyPath(AVPlayer.status), options: [.new, .initial], context: nil)
             self.player?.addObserver(self, forKeyPath: #keyPath(AVPlayerItem.status), options:[.old, .new, .initial], context: nil)
-            self.player?.addObserver(self, forKeyPath: #keyPath(AVPlayer.timeControlStatus), options:[.old, .new, .initial], context: nil)
+//            self.player?.addObserver(self, forKeyPath: #keyPath(AVPlayer.timeControlStatus), options:[.old, .new, .initial], context: nil)
                     
             /* setup callback for onTime */
             let interval = CMTime(seconds: 1.0, preferredTimescale: CMTimeScale(NSEC_PER_SEC))
@@ -330,33 +330,34 @@ class VideoPlayer: NSObject, FlutterPlugin, FlutterStreamHandler, FlutterPlatfor
             }
         }
         
-        else if keyPath == #keyPath(AVPlayer.timeControlStatus) {
-            
-            guard let p = object as! AVPlayer? else {
-                return
-            }
-            
-            if #available(iOS 10.0, *) {
-                
-                switch (p.timeControlStatus) {
-                
-                case AVPlayerTimeControlStatus.paused:
-                    isPlaying = false
-                    self.flutterEventSink?(["name":"onPause"])
-                    break
-                
-                case AVPlayerTimeControlStatus.playing:
-                    isPlaying = true
-                    self.flutterEventSink?(["name":"onPlay"])
-                    break
-                
-                case .waitingToPlayAtSpecifiedRate: break
-                @unknown default:
-                    break
-                }
-            }
-            
-        } else {
+//        else if keyPath == #keyPath(AVPlayer.timeControlStatus) {
+//
+//            guard let p = object as! AVPlayer? else {
+//                return
+//            }
+//
+//            if #available(iOS 10.0, *) {
+//
+//                switch (p.timeControlStatus) {
+////
+////                case AVPlayerTimeControlStatus.paused:
+////                    isPlaying = false
+////                    self.flutterEventSink?(["name":"onPause"])
+////                    break
+////
+////                case AVPlayerTimeControlStatus.playing:
+////                    isPlaying = true
+////                    self.flutterEventSink?(["name":"onPlay"])
+////                    break
+//
+//                case .waitingToPlayAtSpecifiedRate: break
+//                @unknown default:
+//                    break
+//                }
+//            }
+//
+//        }
+        else {
             super.observeValue(forKeyPath: keyPath,
                                of: object,
                                change: change,
@@ -507,7 +508,7 @@ class VideoPlayer: NSObject, FlutterPlugin, FlutterStreamHandler, FlutterPlatfor
     
     public func onCancel(withArguments arguments: Any?) -> FlutterError? {
         flutterEventSink = nil
-        self.player?.flutterEventSink = nil
+//        self.player?.flutterEventSink = nil
         return nil
     }
     
